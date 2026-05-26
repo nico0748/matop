@@ -1,0 +1,29 @@
+/* Native browser print path (Ctrl+P from the main UI).
+   The PDF export route uses a dedicated iframe whose styles are injected
+   from printStylesString.ts. This stylesheet only affects the main window
+   when the user prints it directly. */
+
+@media print {
+  .toolbar,
+  .footer,
+  .editor,
+  .notice,
+  .settings-overlay {
+    display: none !important;
+  }
+  body, html, .app, .workspace {
+    background: white !important;
+    height: auto !important;
+  }
+  .preview {
+    overflow: visible !important;
+    background: white !important;
+  }
+  .preview__content {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    max-width: none !important;
+  }
+}

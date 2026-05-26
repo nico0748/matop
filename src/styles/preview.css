@@ -1,0 +1,107 @@
+/* Preview & print-shared typography for rendered Markdown. */
+
+.matop-print-root {
+  color: #1f2328;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, "Noto Sans JP",
+    "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.matop-print-root h1,
+.matop-print-root h2,
+.matop-print-root h3,
+.matop-print-root h4,
+.matop-print-root h5,
+.matop-print-root h6 {
+  margin: 1.6em 0 0.6em;
+  line-height: 1.3;
+  font-weight: 700;
+}
+.matop-print-root h1 { font-size: 1.9em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+.matop-print-root h2 { font-size: 1.5em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.25em; }
+.matop-print-root h3 { font-size: 1.25em; }
+.matop-print-root h4 { font-size: 1.1em; }
+.matop-print-root h5 { font-size: 1em; }
+.matop-print-root h6 { font-size: 0.9em; color: #57606a; }
+
+.matop-print-root p { margin: 0 0 1em; }
+
+.matop-print-root a {
+  color: #0969da;
+  text-decoration: none;
+}
+.matop-print-root a:hover { text-decoration: underline; }
+
+.matop-print-root ul,
+.matop-print-root ol {
+  margin: 0 0 1em;
+  padding-left: 1.8em;
+}
+.matop-print-root li { margin: 0.2em 0; }
+.matop-print-root li.task-list-item { list-style: none; margin-left: -1.5em; }
+.matop-print-root li.task-list-item input { margin-right: 0.4em; }
+
+.matop-print-root blockquote {
+  margin: 0 0 1em;
+  padding: 0 1em;
+  color: #57606a;
+  border-left: 4px solid #d0d7de;
+}
+
+.matop-print-root code {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+  font-size: 0.88em;
+  padding: 0.15em 0.4em;
+  background: #f6f8fa;
+  border-radius: 4px;
+}
+
+.matop-print-root pre {
+  margin: 0 0 1em;
+  padding: 14px 16px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.88em;
+  line-height: 1.55;
+}
+.matop-print-root pre code {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+.matop-print-root table {
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  width: auto;
+}
+.matop-print-root table th,
+.matop-print-root table td {
+  border: 1px solid #d0d7de;
+  padding: 6px 12px;
+}
+.matop-print-root table th {
+  background: #f6f8fa;
+  font-weight: 600;
+}
+
+.matop-print-root img {
+  max-width: 100%;
+  height: auto;
+}
+
+.matop-print-root hr {
+  border: 0;
+  border-top: 1px solid #d0d7de;
+  margin: 1.5em 0;
+}
+
+.matop-print-root del { color: #57606a; }
