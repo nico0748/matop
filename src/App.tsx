@@ -16,11 +16,9 @@ import {
   type PersistedState,
 } from "./types";
 import { PRINT_STYLES } from "./styles/printStylesString";
-import {
-  clearStored,
-  loadStored,
-  useDebouncedPersist,
-} from "./lib/storage";
+import { clearStored, loadStored, useDebouncedPersist } from "./lib/storage";
+import { LocaleProvider, useLocale } from "./i18n/LocaleContext";
+import type { Locale } from "./i18n/messages";
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
 
@@ -29,20 +27,42 @@ interface AppNotice {
   tone: "error" | "info";
 }
 
-function loadInitial(): { markdown: string; settings: OutputSettings; restored: boolean } {
+interface InitialState {
+  markdown: string;
+  settings: OutputSettings;
+  locale: Locale | undefined;
+  restored: boolean;
+}
+
+function loadInitial(): InitialState {
   const stored = loadStored<PersistedState>();
   if (stored && typeof stored.markdown === "string" && stored.settings) {
     return {
       markdown: stored.markdown,
       settings: { ...DEFAULT_SETTINGS, ...stored.settings },
+      locale: stored.locale,
       restored: true,
     };
   }
-  return { markdown: SAMPLE_MARKDOWN, settings: DEFAULT_SETTINGS, restored: false };
+  return {
+    markdown: SAMPLE_MARKDOWN,
+    settings: DEFAULT_SETTINGS,
+    locale: undefined,
+    restored: false,
+  };
 }
 
 export function App() {
   const initial = useMemo(loadInitial, []);
+  return (
+    <LocaleProvider initial={initial.locale}>
+      <AppInner initial={initial} />
+    </LocaleProvider>
+  );
+}
+
+function AppInner({ initial }: { initial: InitialState }) {
+  const { locale, t } = useLocale();
   const [markdown, setMarkdown] = useState<string>(initial.markdown);
   const [settings, setSettings] = useState<OutputSettings>(initial.settings);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -51,23 +71,25 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
 
-  useDebouncedPersist<PersistedState>({ markdown, settings });
+  useDebouncedPersist<PersistedState>({ markdown, settings, locale });
 
   useEffect(() => {
     if (initial.restored) {
-      setNotice({ tone: "info", message: "前回の下書きを復元しました。" });
+      setNotice({ tone: "info", message: t.draftRestored });
     }
-  }, [initial.restored]);
+    // Show once at mount only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const rendered = useMemo(() => {
     try {
       return renderMarkdown(markdown);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
-      setNotice({ tone: "error", message: `プレビューの生成に失敗しました: ${msg}` });
+      setNotice({ tone: "error", message: t.previewError(msg) });
       return { html: "", data: {} };
     }
-  }, [markdown]);
+  }, [markdown, t]);
 
   const finalHtml = useMemo(() => {
     if (!settings.coverPage) return rendered.html;
@@ -76,13 +98,13 @@ export function App() {
 
   const handleFileLoad = (file: File) => {
     if (file.size > MAX_FILE_BYTES) {
-      setNotice({ tone: "error", message: `ファイルが大きすぎます（上限 ${MAX_FILE_BYTES / 1024 / 1024} MB）。` });
+      setNotice({ tone: "error", message: t.filesizeError(MAX_FILE_BYTES / 1024 / 1024) });
       return;
     }
     const name = file.name.toLowerCase();
     const okExt = /\.(md|markdown|txt)$/.test(name);
     if (!okExt && !file.type.startsWith("text/")) {
-      setNotice({ tone: "error", message: ".md / .markdown / .txt のテキストファイルのみ読み込めます。" });
+      setNotice({ tone: "error", message: t.filetypeError });
       return;
     }
     const reader = new FileReader();
@@ -91,28 +113,26 @@ export function App() {
       setMarkdown(text);
       const stem = file.name.replace(/\.(md|markdown|txt)$/i, "") || "document";
       setSettings((prev) => ({ ...prev, fileName: `${stem}.pdf` }));
-      setNotice({ tone: "info", message: `${file.name} を読み込みました。` });
+      setNotice({ tone: "info", message: t.fileLoaded(file.name) });
     };
     reader.onerror = () => {
-      setNotice({ tone: "error", message: "ファイルの読み込みに失敗しました。" });
+      setNotice({ tone: "error", message: t.fileLoadFailed });
     };
     reader.readAsText(file);
   };
 
   const handleExport = async () => {
     if (!previewRef.current) {
-      setNotice({ tone: "error", message: "プレビューが利用できません。" });
+      setNotice({ tone: "error", message: t.previewUnavailable });
       return;
     }
     setBusy(true);
     try {
-      // Make sure any Mermaid blocks have finished rendering before
-      // we snapshot innerHTML for the print iframe.
       await renderMermaid(previewRef.current);
       printToPdf(settings, previewRef.current.innerHTML, PRINT_STYLES);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
-      setNotice({ tone: "error", message: `PDF 出力に失敗しました: ${msg}` });
+      setNotice({ tone: "error", message: t.exportError(msg) });
     } finally {
       setTimeout(() => setBusy(false), 300);
     }
@@ -120,7 +140,7 @@ export function App() {
 
   const handleClearDraft = () => {
     clearStored();
-    setNotice({ tone: "info", message: "ブラウザに保存された下書きを削除しました。" });
+    setNotice({ tone: "info", message: t.draftCleared });
   };
 
   return (
@@ -168,7 +188,7 @@ export function App() {
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
 
       <footer className="footer">
-        <span>Matop — Markdown to PDF · 文書はブラウザ外に送信されません</span>
+        <span>{t.footerCaption}</span>
       </footer>
     </div>
   );

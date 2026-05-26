@@ -1,4 +1,5 @@
 import type { ThemeId } from "./lib/themes";
+import type { Locale } from "./i18n/messages";
 
 export type PaperSize = "A4" | "A3" | "Letter" | "Legal" | "B5";
 export type Orientation = "portrait" | "landscape";
@@ -39,4 +40,5 @@ export const DEFAULT_SETTINGS: OutputSettings = {
 export interface PersistedState {
   markdown: string;
   settings: OutputSettings;
+  locale?: Locale;
 }
