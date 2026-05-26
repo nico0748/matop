@@ -19,6 +19,8 @@ export interface OutputSettings {
   pageNumbers: boolean;
   headerText: string;
   footerText: string;
+  coverPage: boolean;
+  customCss: string;
 }
 
 export const DEFAULT_SETTINGS: OutputSettings = {
@@ -30,4 +32,11 @@ export const DEFAULT_SETTINGS: OutputSettings = {
   pageNumbers: false,
   headerText: "",
   footerText: "",
+  coverPage: false,
+  customCss: "",
 };
+
+export interface PersistedState {
+  markdown: string;
+  settings: OutputSettings;
+}

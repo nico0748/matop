@@ -301,6 +301,92 @@ body {
   color: var(--color-muted);
 }
 
+/* Help modal */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 30, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 16px;
+}
+
+.help-modal {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  width: min(720px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.help-modal__header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.help-modal__header h2 { margin: 0; font-size: 17px; }
+.help-modal__close {
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-muted);
+}
+.help-modal__body {
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.help-modal__body h3 {
+  margin: 1.4em 0 0.4em;
+  font-size: 15px;
+  color: var(--color-primary);
+}
+.help-modal__body h4 {
+  margin: 1em 0 0.3em;
+  font-size: 14px;
+}
+.help-modal__body p { margin: 0 0 0.6em; }
+.help-modal__body pre {
+  background: #f6f8fa;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  overflow-x: auto;
+  margin: 0 0 0.8em;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+.help-modal__body code {
+  background: #f0f2f5;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+/* Settings panel custom-css textarea spans full width */
+.settings-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: white;
+  color: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
 /* Footer */
 .footer {
   border-top: 1px solid var(--color-border);

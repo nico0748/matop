@@ -56,6 +56,7 @@ export function printToPdf(
       ${buildPageRule(settings)}
       ${baseStyles}
     </style>
+    ${settings.customCss ? `<style data-matop="custom">${settings.customCss}</style>` : ""}
   </head>
   <body>
     <main class="matop-print-root theme-${settings.theme}">${previewHtml}</main>

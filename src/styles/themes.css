@@ -83,8 +83,64 @@
   color: #555;
 }
 
+/* === Cover page === */
+.matop-cover {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1em;
+}
+.matop-cover__title {
+  font-size: 2.2em;
+  font-weight: 700;
+  border: 0 !important;
+  margin: 0 0 0.6em !important;
+}
+.matop-cover__author { margin: 0.2em 0; font-size: 1.1em; }
+.matop-cover__date { margin: 0.2em 0; color: #555; }
+
+/* === Mermaid === */
+.matop-print-root .mermaid {
+  text-align: center;
+  margin: 1em 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.matop-print-root .mermaid svg { max-width: 100%; height: auto; }
+.matop-print-root .mermaid-error {
+  color: #8a1f1f;
+  background: #ffe3e3;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+/* === Footnotes === */
+.matop-print-root .footnotes {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: 1px solid #d0d7de;
+  font-size: 0.9em;
+}
+.matop-print-root .footnotes ol { padding-left: 1.6em; }
+
+/* === Definition list === */
+.matop-print-root dl { margin: 0 0 1em; }
+.matop-print-root dt { font-weight: 600; margin-top: 0.4em; }
+.matop-print-root dd { margin: 0 0 0.4em 1.4em; }
+
 /* === Shared structural styles (preview + print) === */
 .page-break { break-after: page; page-break-after: always; height: 0; }
+@media print {
+  .matop-cover {
+    min-height: calc(100vh - 4em);
+    page-break-after: always;
+    break-after: page;
+  }
+}
 
 .matop-print-root .table-of-contents {
   background: #fafbfc;
