@@ -1,4 +1,5 @@
 import type { OutputSettings, Orientation, PaperSize } from "../types";
+import { THEMES } from "../lib/themes";
 
 interface Props {
   open: boolean;
@@ -30,6 +31,18 @@ export function SettingsPanel({ open, settings, onChange, onClose }: Props) {
         </header>
 
         <section className="settings-panel__section">
+          <label className="settings-field">
+            <span>テーマ</span>
+            <select
+              value={settings.theme}
+              onChange={(e) => update("theme", e.target.value as OutputSettings["theme"])}
+            >
+              {THEMES.map((t) => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
+            </select>
+          </label>
+
           <label className="settings-field">
             <span>用紙サイズ</span>
             <select
@@ -71,6 +84,41 @@ export function SettingsPanel({ open, settings, onChange, onClose }: Props) {
             ))}
           </div>
           <p className="settings-hint">単位は mm / cm / in / pt が使えます。例: 20mm</p>
+        </section>
+
+        <section className="settings-panel__section">
+          <h3>ヘッダー / フッター</h3>
+          <label className="settings-field">
+            <span>
+              <input
+                type="checkbox"
+                checked={settings.pageNumbers}
+                onChange={(e) => update("pageNumbers", e.target.checked)}
+              />
+              {" "}ページ番号を表示
+            </span>
+          </label>
+          <label className="settings-field">
+            <span>ヘッダー（中央）</span>
+            <input
+              type="text"
+              value={settings.headerText}
+              onChange={(e) => update("headerText", e.target.value)}
+              placeholder="（例）社外秘"
+            />
+          </label>
+          <label className="settings-field">
+            <span>フッター（中央）</span>
+            <input
+              type="text"
+              value={settings.footerText}
+              onChange={(e) => update("footerText", e.target.value)}
+              placeholder="（例）© 2026 Matop"
+            />
+          </label>
+          <p className="settings-hint">
+            ブラウザによってはヘッダー/フッターの表示位置・書式が異なる場合があります。
+          </p>
         </section>
 
         <section className="settings-panel__section">

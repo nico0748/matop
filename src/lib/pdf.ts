@@ -1,7 +1,5 @@
 import type { OutputSettings } from "../types";
 
-// Convert margin string (e.g. "20mm") to the value used inside the @page rule.
-// Falls back to a sensible default when the input is empty/invalid.
 function normalizeMargin(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "20mm";
@@ -10,21 +8,43 @@ function normalizeMargin(value: string): string {
   return "20mm";
 }
 
+function escapeCssString(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
 function buildPageRule(settings: OutputSettings): string {
-  const { paperSize, orientation, margins } = settings;
+  const { paperSize, orientation, margins, pageNumbers, headerText, footerText } = settings;
+
+  const marginBoxes: string[] = [];
+  if (headerText) {
+    marginBoxes.push(`@top-center { content: "${escapeCssString(headerText)}"; font-size: 9pt; color: #555; }`);
+  }
+  if (footerText) {
+    marginBoxes.push(`@bottom-center { content: "${escapeCssString(footerText)}"; font-size: 9pt; color: #555; }`);
+  }
+  if (pageNumbers) {
+    // If a custom footer is set, place page numbers on the right; otherwise center.
+    const slot = footerText ? "@bottom-right" : "@bottom-center";
+    marginBoxes.push(`${slot} { content: counter(page) " / " counter(pages); font-size: 9pt; color: #555; }`);
+  }
+
   return `@page {
   size: ${paperSize} ${orientation};
   margin: ${normalizeMargin(margins.top)} ${normalizeMargin(margins.right)} ${normalizeMargin(margins.bottom)} ${normalizeMargin(margins.left)};
+  ${marginBoxes.join("\n  ")}
 }`;
 }
 
 /**
- * Trigger the browser's native print dialog scoped to the preview content,
- * with @page rules derived from the user's output settings. This keeps
- * the document entirely client-side, preserves selectable text in the
- * resulting PDF, and lets the OS handle CJK font fallback correctly.
+ * Print the preview content as PDF via a hidden iframe. The browser's
+ * native print pipeline handles paper size, margins, page numbers
+ * (via @page margin boxes), and CJK font fallback.
  */
-export function printToPdf(settings: OutputSettings, previewHtml: string, baseStyles: string): void {
+export function printToPdf(
+  settings: OutputSettings,
+  previewHtml: string,
+  baseStyles: string,
+): void {
   const title = settings.fileName.replace(/\.pdf$/i, "") || "document";
 
   const html = `<!doctype html>
@@ -38,7 +58,7 @@ export function printToPdf(settings: OutputSettings, previewHtml: string, baseSt
     </style>
   </head>
   <body>
-    <main class="matop-print-root">${previewHtml}</main>
+    <main class="matop-print-root theme-${settings.theme}">${previewHtml}</main>
   </body>
 </html>`;
 
@@ -83,7 +103,6 @@ export function printToPdf(settings: OutputSettings, previewHtml: string, baseSt
     }
   };
 
-  // Wait for images and fonts to be ready so the print output is complete.
   const win = iframe.contentWindow;
   if (win && win.document.readyState !== "complete") {
     win.addEventListener("load", trigger, { once: true });

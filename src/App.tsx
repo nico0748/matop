@@ -25,13 +25,13 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
 
-  const html = useMemo(() => {
+  const rendered = useMemo(() => {
     try {
       return renderMarkdown(markdown);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Unknown error";
       setNotice({ tone: "error", message: `プレビューの生成に失敗しました: ${msg}` });
-      return "";
+      return { html: "", data: {} };
     }
   }, [markdown]);
 
@@ -72,7 +72,6 @@ export function App() {
       const msg = err instanceof Error ? err.message : "Unknown error";
       setNotice({ tone: "error", message: `PDF 出力に失敗しました: ${msg}` });
     } finally {
-      // print() returns synchronously; allow a tick before clearing busy state.
       setTimeout(() => setBusy(false), 300);
     }
   };
@@ -102,7 +101,7 @@ export function App() {
           onChange={setMarkdown}
           onFileLoad={handleFileLoad}
         />
-        <Preview ref={previewRef} html={html} />
+        <Preview ref={previewRef} html={rendered.html} themeId={settings.theme} />
       </main>
 
       <SettingsPanel
