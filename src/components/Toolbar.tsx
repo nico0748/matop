@@ -3,18 +3,22 @@ import { useRef } from "react";
 interface ToolbarProps {
   onOpenFile: (file: File) => void;
   onOpenSettings: () => void;
+  onOpenHelp: () => void;
   onExport: () => void;
   onLoadSample: () => void;
   onClear: () => void;
+  onClearDraft: () => void;
   busy?: boolean;
 }
 
 export function Toolbar({
   onOpenFile,
   onOpenSettings,
+  onOpenHelp,
   onExport,
   onLoadSample,
   onClear,
+  onClearDraft,
   busy,
 }: ToolbarProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -51,6 +55,12 @@ export function Toolbar({
         </button>
         <button type="button" className="btn btn--ghost" onClick={onClear}>
           クリア
+        </button>
+        <button type="button" className="btn btn--ghost" onClick={onClearDraft} title="ブラウザに保存された下書きを削除">
+          下書き消去
+        </button>
+        <button type="button" className="btn btn--ghost" onClick={onOpenHelp}>
+          ? ヘルプ
         </button>
         <button type="button" className="btn btn--ghost" onClick={onOpenSettings}>
           ⚙ 設定

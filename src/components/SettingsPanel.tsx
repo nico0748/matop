@@ -122,6 +122,43 @@ export function SettingsPanel({ open, settings, onChange, onClose }: Props) {
         </section>
 
         <section className="settings-panel__section">
+          <h3>表紙</h3>
+          <label className="settings-field">
+            <span>
+              <input
+                type="checkbox"
+                checked={settings.coverPage}
+                onChange={(e) => update("coverPage", e.target.checked)}
+              />
+              {" "}フロントマターから表紙を生成
+            </span>
+          </label>
+          <p className="settings-hint">
+            文書冒頭の YAML フロントマター（title / author / date）が表紙として独立ページに表示されます。
+          </p>
+        </section>
+
+        <section className="settings-panel__section">
+          <h3>カスタム CSS</h3>
+          <label className="settings-field">
+            <textarea
+              value={settings.customCss}
+              onChange={(e) => update("customCss", e.target.value)}
+              placeholder="例: .matop-print-root h1 { color: navy; }"
+              rows={5}
+              spellCheck={false}
+              style={{
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              }}
+            />
+          </label>
+          <p className="settings-hint">
+            プレビューと PDF の双方に適用されます。`.matop-print-root` 配下にスコープすると安全です。
+          </p>
+        </section>
+
+        <section className="settings-panel__section">
           <label className="settings-field">
             <span>ファイル名</span>
             <input
